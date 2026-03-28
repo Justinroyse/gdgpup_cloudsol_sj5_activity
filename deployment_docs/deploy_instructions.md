@@ -45,6 +45,11 @@ CREATE TABLE inventory (
     stock INT CHECK (stock >= 0)
 );
 
+CREATE TABLE customer_orders (
+    email VARCHAR(255) PRIMARY KEY,
+    total_quantity INT NOT NULL DEFAULT 0
+);
+
 INSERT INTO inventory (id, stock) VALUES ('founders-edition', 500);
 
 -- Type \q to exit the interactive prompt and return to powershell/bash

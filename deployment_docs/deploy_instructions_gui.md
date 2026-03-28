@@ -30,6 +30,10 @@ Welcome to the layout guide for the GDG Founder's Edition flash sale application
          id VARCHAR(50) PRIMARY KEY, 
          stock INT CHECK (stock >= 0)
      );
+     CREATE TABLE customer_orders (
+         email VARCHAR(255) PRIMARY KEY,
+         total_quantity INT NOT NULL DEFAULT 0
+     );
      INSERT INTO inventory (id, stock) VALUES ('founders-edition', 500);
      ```
 
