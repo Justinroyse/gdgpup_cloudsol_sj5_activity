@@ -26,7 +26,7 @@ gcloud sql instances create gdg-inventory-db \
     --region=us-central1
 
 # Create the database inside the instance
-gcloud sql databases create gdg_paskuhan --instance=gdg-inventory-db
+gcloud sql databases create gdg_shirt_drop --instance=gdg-inventory-db
 ```
 
 ### Initialize the Schema
@@ -70,7 +70,7 @@ gcloud run deploy gdg-api \
     --source . \
     --region us-central1 \
     --allow-unauthenticated \
-    --set-env-vars="DB_USER=postgres,DB_PASSWORD=YOUR_DB_PASSWORD,DB_NAME=gdg_paskuhan" \
+    --set-env-vars="DB_USER=postgres,DB_PASSWORD=YOUR_DB_PASSWORD,DB_NAME=gdg_shirt_drop" \
     --add-cloudsql-instances=YOUR_PROJECT_ID:us-central1:gdg-inventory-db \
     --set-env-vars="DB_HOST=/cloudsql/YOUR_PROJECT_ID:us-central1:gdg-inventory-db"
 ```

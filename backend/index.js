@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || '/cloudsql/your-project-id:your-region:your-instance-name',
-  database: process.env.DB_NAME || 'gdg_paskuhan',
+  database: process.env.DB_NAME || 'gdg_shirt_drop',
   password: process.env.DB_PASSWORD || 'password',
   // Cloud SQL Unix sockets don't use port, but fallback to 5432 if using TCP
   port: parseInt(process.env.DB_PORT) || 5432, 

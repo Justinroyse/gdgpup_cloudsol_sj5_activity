@@ -1,6 +1,6 @@
-# 🖱️ GDG Founder's Edition Drop - GUI Deployment Guide
+# 🚀 GDG Founder's Edition Shirt Drop - GUI Deployment Guide
 
-This guide covers how to deploy the flash sale infrastructure using purely the **Google Cloud Console (Web Interface)** instead of the terminal.
+Welcome to the layout guide for the GDG Founder's Edition flash sale application. This guide will walk you through setting up a horizontally scalable infrastructure on Google Cloud Platform (GCP) to handle a massive surge of concurrent student traffic while preventing any stock discrepancies using purely the **Google Cloud Console (Web Interface)** instead of the terminal.
 
 > [!IMPORTANT]
 > Ensure you are logged into [console.cloud.google.com](https://console.cloud.google.com) and have your target project selected in the top-left dropdown next to the Google Cloud logo.
@@ -20,7 +20,7 @@ This guide covers how to deploy the flash sale infrastructure using purely the *
    - **Zonal availability**: Single zone (for simplicity/cost).
    - Under *Customize your instance* > *Machine Type*, select `Shared core` > `db-f1-micro` (or larger depending on your load assumptions).
 5. **Create**: Click `CREATE INSTANCE` at the bottom. (This takes ~5 minutes).
-6. **Create Database**: Once created, click on the instance name. Go to the **Databases** tab on the left. Click `CREATE DATABASE`, name it `gdg_paskuhan`, and click `CREATE`.
+6. **Create Database**: Once created, click on the instance name. Go to the **Databases** tab on the left. Click `CREATE DATABASE`, name it `gdg_shirt_drop`, and click `CREATE`.
 7. **Populate Data**: 
    - Go to the **Cloud SQL Studio** tab on the left menu.
    - Login using the user `postgres` and the password you set.
@@ -49,8 +49,8 @@ For local folders, the fastest GUI-assisted way without setting up a full GitHub
    - Under "Authentication", select **Allow unauthenticated invocations**.
    - Under "Environment Variables", click **Add Variable**:
      - `DB_USER` = `postgres`
-     - `DB_PASSWORD` = `[Your SQL Password]`
-     - `DB_NAME` = `gdg_paskuhan`
+     - `DB_PASSWORD` = `YOUR_DB_PASSWORD`
+     - `DB_NAME` = `gdg_shirt_drop`
    - Under "Connections" -> "Cloud SQL Connections", add your `gdg-inventory-db` instance.
    - **IMPORTANT**: Set an environment variable `DB_HOST` equal to `/cloudsql/YOUR_PROJECT_ID:us-central1:gdg-inventory-db`.
 4. **Click Deploy**. 
@@ -66,7 +66,7 @@ For local folders, the fastest GUI-assisted way without setting up a full GitHub
 
 1. **Navigate to Cloud Storage**: Search for `Storage` in the top search map and select **Buckets**.
 2. **Create Bucket**: Click `CREATE`. 
-3. **Name**: Enter a globally unique name like `gdg-frontend-deploy-YOURNAME`.
+3. **Name**: Enter a globally unique name like `gdg-shirt-drop-frontend-YOUR_ID`.
 4. **Location Type**: Select `Region` and choose `us-central1`.
 5. Click **CREATE** at the bottom (leave other settings default).
 6. **Upload Website**: Inside the bucket overview, click `UPLOAD FILES` / `UPLOAD FOLDER` and upload the raw contents of your `frontend` directory (the `index.html`, `script.js`, `styles.css`, and `shirt.png`).
@@ -116,7 +116,7 @@ We will set up an HTTP Load Balancer to correctly route requests.
 
 ---
 
-## 🎉 5. Verify Your Deployment
+## 🎉 5. Verify Your Master Deployment Target
 
 - Google Cloud will take 5-10 minutes to officially propagate your new Global Load Balancer to the edge nodes worldwide.
 - Go back to the **Load Balancing** page. Click on your `gdg-app-lb`.
