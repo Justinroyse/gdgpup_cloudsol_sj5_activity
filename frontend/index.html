@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDG Founder's Edition Drop</title>
+    <meta name="description" content="Secure your limited GDG PUP Founder's Edition Shirt. Only 500 units available.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Abstract premium animated background -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-noise"></div>
+
+    <main class="container">
+        <section class="glass-card">
+            <header class="card-header">
+                <div class="stock-badge">
+                    <span class="live-dot"></span>
+                    RELEASE LIVE
+                </div>
+                <div class="limit-text">0 / 500</div>
+            </header>
+
+            <div class="product-preview">
+                <img src="shirt.png" alt="GDG Founder's Edition Shirt" class="shirt-image" id="productImage" onerror="this.style.display='none'; document.getElementById('image-fallback').style.display='flex'">
+                <div class="image-fallback" id="image-fallback" style="display: none;">
+                    <div class="fallback-glow"></div>
+                    <span class="fallback-text">DECRYPTING ASSET...</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <h1 class="product-title">Founder's <span class="text-gradient">Edition</span></h1>
+                <p class="product-desc">The official limited-series drop for GDG PUP developers. High-performance fabric with algorithmic aesthetics.</p>
+                
+                <div class="action-area">
+                    <button id="buyButton" class="premium-btn">
+                        <span class="btn-text">SECURE YOURS</span>
+                        <div class="loader hidden" id="btnLoader"></div>
+                    </button>
+                    <div id="statusMessage" class="status-msg hidden"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
