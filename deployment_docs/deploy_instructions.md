@@ -27,6 +27,9 @@ gcloud sql instances create gdg-inventory-db \
 
 # Create the database inside the instance
 gcloud sql databases create gdg_shirt_drop --instance=gdg-inventory-db
+
+# Set the password for the default postgres user (REQUIRED to prevent 500 errors)
+gcloud sql users set-password postgres --instance=gdg-inventory-db --password=YOUR_DB_PASSWORD
 ```
 
 ### Initialize the Schema
@@ -84,6 +87,7 @@ gcloud run deploy gdg-api \
 > **Updating the API URL**
 > Take note of the **Service URL** link outputted by the final deployment step command above. 
 > You **must** update the `API_URL` constant found inside `frontend/script.js` directly with this URL link *before* you execute the final step 3 to deploy the frontend.
+> **Critical Troubleshooting:** Ensure you keep the `/api/buy` endpoint at the very end of your URL (e.g. `https://gdg-api-...run.app/api/buy`), otherwise the backend will return a 404 Route Not Found error!
 
 Once you have grabbed the URL and updated your `frontend/script.js`, return to the main root directory:
 
