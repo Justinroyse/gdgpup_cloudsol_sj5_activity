@@ -2,11 +2,23 @@
 
 Welcome to the layout guide for the GDG Founder's Edition flash sale application. This guide will walk you through setting up a horizontally scalable infrastructure on Google Cloud Platform (GCP) to handle a massive surge of concurrent student traffic while preventing any stock discrepancies.
 
+This guide assumes you are working from **Google Cloud Console Cloud Shell** and starting from the repository root unless a step says otherwise.
+
 > [!IMPORTANT]
 > **Prerequisites**
-> - You have the `gcloud` CLI installed and authenticated (`gcloud auth login`).
+> - Open **Google Cloud Console Cloud Shell** and authenticate there.
 > - You have a GCP Project created and billing is enabled.
-> - You have set your target project locally using `gcloud config set project YOUR_PROJECT_ID`.
+> - You have set your target project in Cloud Shell using `gcloud config set project YOUR_PROJECT_ID`.
+
+### 0. Clone the Repository
+If the repository is not already available in Cloud Shell, clone it first and move into the project root:
+
+```bash
+git clone https://github.com/Justinroyse/gdgpup_cloudsol_sj5_activity
+cd gdgpup_cloudsol_sj5_activity
+```
+
+If Cloud Shell already opened inside the repository, you can skip the clone and just confirm you are at the project root before continuing.
 
 ---
 
@@ -19,23 +31,50 @@ Run the following commands to create your PostgreSQL instance and database:
 
 ```bash
 # Create a Cloud SQL instance (this takes a few minutes)
-gcloud sql instances create gdg-inventory-db \
-    --database-version=POSTGRES_15 \
-    --cpu=1 \
-    --memory=3840MB \
-    --region=us-central1
+gcloud sql instances create gdg-inventory-db --database-version=POSTGRES_15 --cpu=1 --memory=3840MB --region=us-central1
+
 
 # Create the database inside the instance
 gcloud sql databases create gdg_shirt_drop --instance=gdg-inventory-db
 ```
 
+> [!NOTE]
+> **Cloud Shell note**
+> Use the commands exactly as shown in Cloud Shell. If you paste them into another shell, make sure multiline backslashes stay at the ends of the lines.
+
 ### Initialize the Schema
 Connect to your new database instance to set up the inventory table.
+
+Before connecting, set a password for the default `postgres` user. Cloud SQL does not provide a usable default password.
+
+```bash
+gcloud sql users set-password postgres --instance=gdg-inventory-db --prompt-for-password
+```
+
+When prompted, enter the password you want to use for this database account.
 
 ```bash
 # Connect to the cloud database
 gcloud sql connect gdg-inventory-db --user=postgres
 ```
+
+> [!IMPORTANT]
+> **Cloud SQL connect dependency**
+> If `gcloud sql connect` fails with `Cloud SQL Proxy (v2) couldn't be found in PATH`, install the required component first:
+>
+> ```bash
+> gcloud components install cloud-sql-proxy
+> ```
+>
+> Then rerun:
+>
+> ```bash
+> gcloud sql connect gdg-inventory-db --user=postgres
+> ```
+>
+> If you then get a `psql` not found error, install the PostgreSQL client for your OS and ensure `psql` is available on your `PATH`.
+>
+> If `psql` prompts for `Password:` and then shows `fe_sendauth: no password supplied`, the `postgres` password has not been set yet or you pressed Enter without typing one. Run the password command above again, then reconnect and enter that password when prompted.
 
 Once you are loaded into the interactive PostgreSQL prompt, paste these SQL commands:
 
@@ -52,7 +91,7 @@ CREATE TABLE customer_orders (
 
 INSERT INTO inventory (id, stock) VALUES ('founders-edition', 500);
 
--- Type \q to exit the interactive prompt and return to powershell/bash
+-- Type \q to exit the interactive prompt and return to Cloud Shell
 \q
 ```
 
@@ -65,6 +104,7 @@ The backend is a high-speed, lightweight Vanilla Node.js API that connects to Cl
 First, navigate to the backend directory:
 
 ```bash
+cd ~/gdgpup_cloudsol_sj5_activity
 cd backend
 ```
 
@@ -83,7 +123,7 @@ gcloud run deploy gdg-api \
 > [!NOTE]
 > **Updating the API URL**
 > Take note of the **Service URL** link outputted by the final deployment step command above. 
-> You **must** update the `API_URL` constant found inside `frontend/script.js` directly with this URL link *before* you execute the final step 3 to deploy the frontend.
+> Update the `API_URL` constant found inside `frontend/script.js` in Cloud Shell with this URL link *before* you execute the final step 3 to deploy the frontend.
 
 Once you have grabbed the URL and updated your `frontend/script.js`, return to the main root directory:
 
@@ -122,6 +162,9 @@ gcloud storage buckets update gs://gdg-shirt-drop-frontend-YOUR_ID \
     --web-main-page-suffix=index.html \
     --web-error-page=index.html
 ```
+
+> [!NOTE]
+> The bucket update command must use the `gs://...` bucket URL exactly. Do not replace it with a `file://` path.
 
 ---
 
@@ -167,11 +210,14 @@ Let the Load Balancer make smart traffic routing splits based on prefix filters:
 gcloud compute url-maps create gdg-app-url-map \
     --default-backend-bucket=gdg-frontend-backend
 
-# Override the rule exclusively for catching /api/ endpoints to redirect completely to the API Backend Server Node.js cluster
+# Add a host rule and path matcher for your real domain so /api/* routes to the API backend
 gcloud compute url-maps add-path-matcher gdg-app-url-map \
     --default-backend-bucket=gdg-frontend-backend \
     --path-matcher-name=api-matcher \
-    --path-rules="/api/*=gdg-api-backend"
+    --path-rules="/api/*=gdg-api-backend" \
+    --new-hosts=YOUR_DOMAIN
+
+# If you are testing with a custom domain, replace YOUR_DOMAIN with that fully qualified domain name.
 ```
 
 ### Expose Globally to the Open Internet Network
