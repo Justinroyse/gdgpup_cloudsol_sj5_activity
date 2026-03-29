@@ -53,7 +53,7 @@ For local folders, the fastest GUI-assisted way without setting up a full GitHub
    - Under "Authentication", select **Allow unauthenticated invocations**.
    - Under "Environment Variables", click **Add Variable**:
      - `DB_USER` = `postgres`
-     - `DB_PASSWORD` = `YOUR_DB_PASSWORD`
+     - `DB_PASSWORD` = `YOUR_DB_PASSWORD` *(This MUST exactly match the password you set in Step 1 to prevent 500 Database Connection errors).*
      - `DB_NAME` = `gdg_shirt_drop`
    - Under "Connections" -> "Cloud SQL Connections", add your `gdg-inventory-db` instance.
    - **IMPORTANT**: Set an environment variable `DB_HOST` equal to `/cloudsql/YOUR_PROJECT_ID:us-central1:gdg-inventory-db`.
@@ -63,6 +63,7 @@ For local folders, the fastest GUI-assisted way without setting up a full GitHub
 > **Updating the API URL**
 > Once the deployment completes in the right sidebar, it will display a **Service URL**. 
 > Open your local `frontend/script.js` file, replace the `API_URL` variable with this new URL link, and save the file loudly before continuing to step 3.
+> **Critical Troubleshooting:** Ensure you keep the `/api/buy` endpoint at the very end of your URL (e.g. `https://gdg-api-...run.app/api/buy`), otherwise the backend will return a 404 Route Not Found error!
 
 ---
 
