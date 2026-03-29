@@ -36,6 +36,9 @@ gcloud sql instances create gdg-inventory-db --database-version=POSTGRES_15 --cp
 
 # Create the database inside the instance
 gcloud sql databases create gdg_shirt_drop --instance=gdg-inventory-db
+
+# Set the password for the default postgres user (REQUIRED to prevent 500 errors)
+gcloud sql users set-password postgres --instance=gdg-inventory-db --password=YOUR_DB_PASSWORD
 ```
 
 > [!NOTE]
