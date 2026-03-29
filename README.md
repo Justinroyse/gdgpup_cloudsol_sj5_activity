@@ -1,82 +1,54 @@
-# 👕 GDG Founder's Edition Shirt Drop
+# GDG Founder's Edition Shirt Drop
 
-Welcome! This repository contains the source code of one of the many possible solutions and deployment procedures for the **GDG PUP Founder's Edition Shirt Drop** infrastructure lab. 
+The GDG Founder's Edition Shirt Drop is a flash-sale app built to survive a burst of student traffic without overselling inventory.
 
-## 🎯 Scenario: GDG PUP Flash Sale
+## Mission
 
-**The Situation:**
-GDG PUP is releasing a limited-edition "GDG Founder’s Edition" Shirt. Only 500 units are available. At exactly 12:00 PM, the link goes live to thousands of students.
+The deployment is built around five goals:
 
-**The Mission:**
-Cadets must deploy an infrastructure capable of handling a massive surge of traffic while ensuring the inventory count remains 100% accurate. The system must automatically scale up when the drop happens and scale down to zero when the rush is over.
+1. Keep inventory in a transactional Cloud SQL PostgreSQL database.
+2. Run the API on Cloud Run so it scales with demand.
+3. Host the frontend as a static site on Cloud Storage.
+4. Route traffic through a global HTTP Load Balancer.
+5. Keep the operator workflow simple enough to run from Google Cloud Console Cloud Shell.
 
-> [!NOTE]
-> This codebase purposely uses **vanilla technologies** (No React, No Express framework) to demonstrate that native GCP logic and features are more than capable of handling highly scalable serverless architectures.
+## What’s Included
 
-## 🏗️ Infrastructure Overview
+- `docs/deploy_instructions.md` - the full Cloud Shell-first deployment guide.
+- `docs/deploy_instructions_gui.md` - a GUI-focused deployment guide for operators who prefer the console.
+- Backend source for the Cloud Run API.
+- Frontend source for the static storefront.
+- Infrastructure steps for Cloud SQL, Cloud Storage, and Load Balancing.
 
-| Component | Service | Configuration |
-|-----------|---------|---------------|
-| **Frontend** | Cloud Storage | Static website hosting for the "Buy" page. |
-| **Backend API** | Cloud Run | Serverless logic; scales based on request volume. |
-| **Database** | Cloud SQL | Relational database (PostgreSQL/MySQL) for inventory. |
-| **Networking** | Load Balancer | Global External HTTP(S) Load Balancer (Standard Tier). |
-| **Deployment** | Source-to-Deploy | Deploying directly from code folder to Cloud Run. |
+## Deployment Flow
 
-## 📂 Project Structure
-- `/frontend/` - Contains the premium HTML, CSS, and Vanilla JS drop landing page.
-- `/backend/` - Contains the Node.js API logic and Postgres connector pool.
-- `/deployment_docs/` - Contains step-by-step tutorials and instructions on deploying this infrastructure.
+1. Open **Google Cloud Console Cloud Shell**.
+2. Follow `docs/deploy_instructions.md` or `docs/deploy_instructions_gui.md` deployfrom the repository root.
+3. Set the `postgres` password, deploy the API, update `frontend/script.js` with the API URL, then deploy the frontend and load balancer.
 
-## 🚀 Getting Started (Prerequisites)
+## Operator Notes
 
-To work with this repository, you must first clone or fork it to your local machine:
+- The guide assumes Cloud Shell, not local PowerShell.
+- Cloud SQL does not ship with a usable default `postgres` password.
+- If `gcloud sql connect` prompts for a password and fails, reset the `postgres` password and try again.
 
-```bash
-# Clone the repository directly
-git clone https://github.com/YOUR-ORG/gcp_gdgshirt_activity.git
-cd gcp_gdgshirt_activity
+## REQUIRED: Shutdown All Services to avoid additional costs
 
-# Alternatively, you can fork the repository on GitHub Website GUI
-```
-
-Deploying this application architecture gives you exposure to handling flash sales on Cloud Provider hardware. To deploy this project:
-
-1. Look through the custom backend routing logic in `/backend/index.js` to understand the database operations.
-2. Navigate to the `deployment_docs/` folder in your workspace.
-3. Choose your preferred tutorial:
-   - Open `deploy_instructions.md` to configure using the **`gcloud` CLI** terminal commands.
-   - Open `deploy_instructions_gui.md` to configure exclusively via navigating the **Google Cloud Web Console**.
-
-## 🤝 Contributing
-
-We welcome contributions! To ensure a smooth integration of your work, please follow these standardized steps:
-
-### 1. Create a Branch
-Always branch off from `main`. Do not push directly to the `main` branch.
+Run these commands in Cloud Shell if you want to remove everything created by the demo.
 
 ```bash
-git checkout main
-git pull origin main
-git checkout -b <type>/<short-description>
+# Delete the load balancer pieces
+gcloud compute forwarding-rules delete gdg-http-rule --global
+gcloud compute target-http-proxies delete gdg-http-proxy
+gcloud compute url-maps delete gdg-app-url-map
+gcloud compute backend-services delete gdg-api-backend --global
+gcloud compute backend-buckets delete gdg-frontend-backend
+gcloud compute network-endpoint-groups delete gdg-api-neg --region=us-central1
+
+# Delete the app services
+gcloud run services delete gdg-api --region=us-central1
+gcloud storage rm -r gs://gdg-shirt-drop-frontend-YOUR_ID
+gcloud sql instances delete gdg-inventory-db
 ```
 
-**Branch Naming Conventions:**
-- `feat/` - For new additions or enhancements (e.g., `feat/add-dockerfile`)
-- `fix/` - For bug fixes (e.g., `fix/postgres-connection-timeout`)
-- `docs/` - For documentation updates (e.g., `docs/update-readme`)
-
-### 2. Submit a Pull Request
-Once you have committed your changes, push your branch and open a Pull Request (PR) against the `main` branch.
-
-**PR Naming Conventions:**
-Your PR Title should be clear and descriptive following the Conventional Commits specification:
-- `[feat]: Add user authentication to API`
-- `[fix]: Resolve stock overselling race condition`
-- `[docs]: Update deployment instructions folder structure`
-
-**PR Description Format:**
-Please include the following sections in your PR description:
-- **Objective:** What problem does this PR solve?
-- **Changes Made:** A bulleted list of the technical changes.
-- **Testing:** How did you verify these changes work?
+If you used a custom domain, remove or update the DNS record separately.
