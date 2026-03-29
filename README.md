@@ -34,7 +34,7 @@ To work with this repository, you must first clone or fork it to your local mach
 
 ```bash
 # Clone the repository directly
-git clone https://github.com/YOUR-ORG/gcp_gdgshirt_activity.git
+git clone https://github.com/Justinroyse/gdgpup_cloudsol_sj5_activity
 cd gcp_gdgshirt_activity
 
 # Alternatively, you can fork the repository on GitHub Website GUI
