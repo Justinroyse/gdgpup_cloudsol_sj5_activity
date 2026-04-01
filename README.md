@@ -15,7 +15,6 @@ The deployment is built around five goals:
 ## What’s Included
 
 - `docs/deploy_instructions.md` - the full Cloud Shell-first deployment guide.
-- `docs/deploy_instructions_gui.md` - a GUI-focused deployment guide for operators who prefer the console.
 - Backend source for the Cloud Run API.
 - Frontend source for the static storefront.
 - Infrastructure steps for Cloud SQL, Cloud Storage, and Load Balancing.
@@ -23,7 +22,7 @@ The deployment is built around five goals:
 ## Deployment Flow
 
 1. Open **Google Cloud Console Cloud Shell**.
-2. Follow `docs/deploy_instructions.md` or `docs/deploy_instructions_gui.md` deployfrom the repository root.
+2. Follow `docs/deploy_instructions.md` deploy from the repository root.
 3. Set the `postgres` password, deploy the API, update `frontend/script.js` with the API URL, then deploy the frontend and load balancer.
 
 ## Operator Notes
